@@ -1,0 +1,9 @@
+venv/
+dataset/
+__pycache__/
+*.pyc
+.env
+test_log*.txt
+debug_input.png
+test_import*.py
+ascii_print.py
