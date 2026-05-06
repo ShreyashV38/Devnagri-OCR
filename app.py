@@ -21,18 +21,18 @@ import gradio as gr
 
 import cv2
 
-# ---------------------------------------------------------------------------
+
 # PATHS
-# ---------------------------------------------------------------------------
+
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 MODEL_PATH = os.path.join(PROJECT_ROOT, 'backend', 'devanagari_master.h5')
 LABELS_PATH = os.path.join(PROJECT_ROOT, 'backend', 'label_classes.npy')
 
 IMG_SIZE = 32
 
-# ---------------------------------------------------------------------------
+
 # LOAD MODEL AND LABELS AT STARTUP
-# ---------------------------------------------------------------------------
+
 if not os.path.exists(MODEL_PATH):
     print(f'\nERROR: Model not found at {MODEL_PATH}')
     print('Run train_model.py first:  python train_model.py\n')
@@ -51,9 +51,9 @@ print(f'Model loaded: {num_classes} classes')
 print(f'Classes: {list(label_classes)}')
 
 
-# ---------------------------------------------------------------------------
+
 # PREDICTION
-# ---------------------------------------------------------------------------
+
 def predict(image):
     if image is None:
         return "No image provided.", ""
@@ -132,9 +132,10 @@ def predict(image):
     top5_text = "\n".join(lines)
 
     return top_prediction, top5_text
-# ---------------------------------------------------------------------------
+
+    
 # GRADIO UI
-# ---------------------------------------------------------------------------
+
 with gr.Blocks(title="Devanagari Character Recognizer") as app:
     gr.Markdown("# Devanagari Character Recognizer")
     gr.Markdown("Upload an image of a single Devanagari character.")

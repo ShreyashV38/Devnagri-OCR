@@ -12,9 +12,9 @@ import shutil
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-# ---------------------------------------------------------------------------
+# ---
 # PATHS
-# ---------------------------------------------------------------------------
+# ---
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 DATASET_ROOT = os.path.join(PROJECT_ROOT, 'dataset', 'DevanagariHandwrittenCharacterDataset')
 TRAIN_DIR = os.path.join(DATASET_ROOT, 'Train')
@@ -28,9 +28,9 @@ IMG_SIZE = 32
 EPOCHS = 50
 BATCH_SIZE = 128
 
-# ---------------------------------------------------------------------------
+# ---
 # STEP 0: CLEANUP OLD FILES
-# ---------------------------------------------------------------------------
+# ---
 CLEANUP_TARGETS = [
     'core_engine',
     'backend/api.py',
@@ -55,9 +55,9 @@ for target in CLEANUP_TARGETS:
         print(f'  [DELETED] file: {target}')
 print('  Cleanup done.\n')
 
-# ---------------------------------------------------------------------------
+# ---
 # IMPORTS (after cleanup, so old core_engine doesn't interfere)
-# ---------------------------------------------------------------------------
+# ---
 import glob
 import numpy as np
 
@@ -82,9 +82,9 @@ from sklearn.preprocessing import LabelEncoder
 import cv2
 
 
-# ---------------------------------------------------------------------------
+# ---
 # LABEL EXTRACTION
-# ---------------------------------------------------------------------------
+# ---
 def extract_label(folder_name):
     """
     Extract label from folder name by splitting on '_' and taking last part.
@@ -97,9 +97,9 @@ def extract_label(folder_name):
     return parts[-1]
 
 
-# ---------------------------------------------------------------------------
+# ---
 # IMAGE LOADING
-# ---------------------------------------------------------------------------
+# ---
 def load_dataset(root_dir, dataset_name):
     """
     Load all images from root_dir/class_folder/*.png structure.
@@ -148,9 +148,9 @@ def load_dataset(root_dir, dataset_name):
     return images, labels
 
 
-# ---------------------------------------------------------------------------
+# ---
 # CNN MODEL
-# ---------------------------------------------------------------------------
+# ---
 def build_model(num_classes):
     """Build the CNN model."""
     model = Sequential([
@@ -184,9 +184,9 @@ def build_model(num_classes):
     return model
 
 
-# ---------------------------------------------------------------------------
+# ---
 # PLOT TRAINING HISTORY
-# ---------------------------------------------------------------------------
+# ---
 def save_plot(history, path):
     """Save accuracy and loss plots side by side."""
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
@@ -213,9 +213,9 @@ def save_plot(history, path):
     print(f'  [SAVED] Plot: {path}')
 
 
-# ---------------------------------------------------------------------------
+# ---
 # MAIN
-# ---------------------------------------------------------------------------
+# ---
 def main():
     print('\n' + '=' * 60)
     print('  DEVANAGARI CHARACTER CLASSIFIER - TRAINING')
@@ -223,7 +223,7 @@ def main():
 
     os.makedirs(BACKEND_DIR, exist_ok=True)
 
-    # ---- Load data ----
+    #  Load data 
     train_images, train_labels = load_dataset(TRAIN_DIR, 'Training Set (Train/)')
     test_images, test_labels = load_dataset(TEST_DIR, 'Test Set (Test/)')
 
@@ -231,7 +231,7 @@ def main():
     all_images = np.concatenate((train_images, test_images))
     all_labels = np.concatenate((train_labels, test_labels))
 
-    # ---- Encode labels ----
+    #  Encode labels 
     print(f'\n--- Encoding labels ---')
     le = LabelEncoder()
     encoded = le.fit_transform(all_labels)
@@ -244,7 +244,7 @@ def main():
 
     categorical = to_categorical(encoded, num_classes=num_classes)
 
-    # ---- Train/val split ----
+    #  Train/val split 
     print(f'\n--- Splitting 80/20 ---')
     X_train, X_val, y_train, y_val = train_test_split(
         all_images, categorical,
@@ -255,12 +255,12 @@ def main():
     print(f'  Train: {X_train.shape[0]} samples')
     print(f'  Val:   {X_val.shape[0]} samples')
 
-    # ---- Build model ----
+    #  Build model 
     print(f'\n--- Building CNN ({num_classes} classes) ---')
     model = build_model(num_classes)
     model.summary()
 
-    # ---- Train ----
+    #  Train 
     print(f'\n--- Training: {EPOCHS} epochs, batch={BATCH_SIZE} ---')
 
     callbacks = [
@@ -279,13 +279,13 @@ def main():
         verbose=1
     )
 
-    # ---- Evaluate on validation ----
+    #  Evaluate on validation 
     print(f'\n--- Validation Results ---')
     val_loss, val_acc = model.evaluate(X_val, y_val, verbose=0)
     print(f'  Val Accuracy: {val_acc * 100:.2f}%')
     print(f'  Val Loss:     {val_loss:.4f}')
 
-    # ---- Evaluate on Test set ----
+    #  Evaluate on Test set 
     print(f'\n--- Loading Test Set ---')
     test_encoded = le.transform(test_labels)
     test_categorical = to_categorical(test_encoded, num_classes=num_classes)
@@ -295,14 +295,14 @@ def main():
     print(f'  Test Accuracy: {test_acc * 100:.2f}%')
     print(f'  Test Loss:     {test_loss:.4f}')
 
-    # ---- Save model ----
+    #  Save model 
     model.save(MODEL_PATH)
     print(f'  [SAVED] Model: {MODEL_PATH}')
 
-    # ---- Save plot ----
+    #  Save plot 
     save_plot(history, PLOT_PATH)
 
-    # ---- Summary ----
+    #  Summary 
     print('\n' + '=' * 60)
     print('  TRAINING COMPLETE')
     print('=' * 60)
